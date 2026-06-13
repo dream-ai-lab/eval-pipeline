@@ -37,6 +37,10 @@ services:
       mlflow server --host 0.0.0.0 --port 5000
       --backend-store-uri sqlite:////mlflow/mlflow.db
       --artifacts-destination /mlflow/artifacts
+    environment:
+      # Allow the in-compose hostname; MLflow 3.x blocks unknown Host headers
+      # (DNS-rebinding protection) which otherwise rejects http://mlflow:5000.
+      MLFLOW_SERVER_ALLOWED_HOSTS: "mlflow:5000,localhost:5000,127.0.0.1:5000"
     ports:
       - "5000:5000"
     volumes:
