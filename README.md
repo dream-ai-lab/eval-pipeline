@@ -20,6 +20,8 @@ in Docker. The standard itself is split across dedicated repos (below); here
 | reproduce-[sst2](https://github.com/dream-ai-lab/reproduce-distilbert-sst2) · [emotion](https://github.com/dream-ai-lab/reproduce-distilbert-emotion) | experiment | Team-owned repos. No PR back to central. |
 | **eval-pipeline** (this repo) | bundle | Runs everything together + shared MLflow + docs + discovery tools. |
 
+![Repo pipeline & data flow](docs/pipeline.svg)
+
 ## What's here
 
 | Path | What it is |

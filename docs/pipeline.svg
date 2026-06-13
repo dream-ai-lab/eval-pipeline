@@ -1,0 +1,106 @@
+<svg viewBox="0 0 1160 700" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="t d" font-family="-apple-system, system-ui, 'Segoe UI', Roboto, sans-serif">
+  <title id="t">Eval standard — repo pipeline and data flow</title>
+  <desc id="d">eval-lib is the pinned standard installed by every repo. paper-registry holds the spec catalog. New experiments are created from experiment-template; each team-owned reproduce repo pins eval-lib and logs a golden record to the shared MLflow server. Only new metrics (to eval-lib) and new specs (to paper-registry) are PR'd back. eval-pipeline bundles it all.</desc>
+  <style>
+    .title{ font-size:23px; font-weight:700; fill:#1a1a1a; }
+    .sub{ font-size:13px; fill:#666; }
+    .bt{ font-size:14.5px; font-weight:650; }
+    .bs{ font-size:11.5px; }
+    .nt{ fill:#2C2C2A; } .ns{ fill:#5F5E5A; }
+    .pt{ fill:#26215C; } .ps{ fill:#534AB7; }
+    .arr{ fill:none; stroke:#888780; stroke-width:2; }
+    .arrd{ fill:none; stroke:#9F97E0; stroke-width:2; stroke-dasharray:5 4; }
+    .alab{ font-size:11px; fill:#777; }
+    .alabp{ font-size:11px; fill:#6E63C8; }
+  </style>
+  <defs>
+    <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#888780"/>
+    </marker>
+    <marker id="ahp" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#9F97E0"/>
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="1160" height="700" fill="#FCFBF9"/>
+  <rect x="4" y="4" width="1152" height="692" rx="14" fill="none" stroke="#E4E2DA" stroke-width="1.5"/>
+
+  <text class="title" x="580" y="36" text-anchor="middle">Eval standard — repo pipeline &amp; data flow</text>
+  <text class="sub" x="580" y="58" text-anchor="middle">eval-lib flows out as a pinned dependency · results flow into MLflow · only specs &amp; metrics PR back</text>
+
+  <!-- PR inbound (authoring) -->
+  <text class="alabp" x="135" y="96" text-anchor="middle">PR: new metric</text>
+  <path class="arrd" d="M135,100 L135,128" marker-end="url(#ahp)"/>
+  <text class="alabp" x="480" y="96" text-anchor="middle">PR: new spec (survey)</text>
+  <path class="arrd" d="M480,100 L480,128" marker-end="url(#ahp)"/>
+
+  <!-- eval-lib rail -->
+  <rect x="40" y="130" width="190" height="250" rx="12" fill="#EEEDFE" stroke="#7F77DD" stroke-width="1.5"/>
+  <text class="pt" x="135" y="246" text-anchor="middle" font-size="17" font-weight="700">eval-lib</text>
+  <text class="ps" x="135" y="268" text-anchor="middle" font-size="12">v0.1.0 · the standard</text>
+  <text class="ps" x="135" y="312" text-anchor="middle">pip install (pinned)</text>
+  <text class="ps" x="135" y="332" text-anchor="middle">by every repo →</text>
+
+  <!-- paper-registry -->
+  <rect x="330" y="130" width="300" height="66" rx="11" fill="#F1EFE8" stroke="#D3D1C7"/>
+  <text class="bt nt" x="480" y="158" text-anchor="middle">paper-registry</text>
+  <text class="bs ns" x="480" y="180" text-anchor="middle">eval_spec catalog + baselines</text>
+
+  <!-- experiment-template -->
+  <rect x="700" y="130" width="320" height="66" rx="11" fill="#F1EFE8" stroke="#D3D1C7"/>
+  <text class="bt nt" x="860" y="158" text-anchor="middle">experiment-template</text>
+  <text class="bs ns" x="860" y="180" text-anchor="middle">“Use this template” →</text>
+
+  <!-- eval-lib -> paper-registry (runtime) -->
+  <path class="arr" d="M230,163 L322,163" marker-end="url(#ah)"/>
+  <text class="alab" x="276" y="153" text-anchor="middle">pip · validates</text>
+
+  <!-- eval-lib -> experiments (runtime) -->
+  <path class="arr" d="M210,380 L300,312" marker-end="url(#ah)"/>
+  <text class="alab" x="232" y="372">pip (pinned)</text>
+
+  <!-- team repos -->
+  <rect x="300" y="280" width="250" height="78" rx="10" fill="#F1EFE8" stroke="#D3D1C7"/>
+  <text class="bt nt" x="425" y="312" text-anchor="middle" font-size="13">reproduce-distilbert-sst2</text>
+  <text class="bs ns" x="425" y="334" text-anchor="middle">team-owned · no central PR</text>
+
+  <rect x="575" y="280" width="250" height="78" rx="10" fill="#F1EFE8" stroke="#D3D1C7"/>
+  <text class="bt nt" x="700" y="312" text-anchor="middle" font-size="13">reproduce-distilbert-emotion</text>
+  <text class="bs ns" x="700" y="334" text-anchor="middle">team-owned · no central PR</text>
+
+  <rect x="850" y="280" width="250" height="78" rx="10" fill="#F8F7F2" stroke="#C7C5BC" stroke-dasharray="6 4"/>
+  <text class="bt ns" x="975" y="312" text-anchor="middle" font-size="13">reproduce-… (your paper)</text>
+  <text class="bs ns" x="975" y="334" text-anchor="middle">from template</text>
+
+  <!-- paper-registry -> team (authoring: spec) -->
+  <path class="arrd" d="M480,196 L600,278" marker-end="url(#ahp)"/>
+  <text class="alabp" x="512" y="246">spec</text>
+
+  <!-- template -> team (authoring) -->
+  <path class="arrd" d="M860,196 L965,278" marker-end="url(#ahp)"/>
+  <text class="alabp" x="935" y="246" text-anchor="end">use template</text>
+
+  <!-- team -> MLflow (runtime: log) -->
+  <path class="arr" d="M425,360 L545,418" marker-end="url(#ah)"/>
+  <path class="arr" d="M700,360 L600,418" marker-end="url(#ah)"/>
+  <path class="arr" d="M975,360 L640,418" marker-end="url(#ah)"/>
+  <text class="alab" x="610" y="392" text-anchor="middle">log golden record</text>
+
+  <!-- MLflow -->
+  <rect x="430" y="420" width="300" height="66" rx="11" fill="#EEEDFE" stroke="#7F77DD" stroke-width="1.5"/>
+  <text class="pt" x="580" y="448" text-anchor="middle" font-size="15" font-weight="700">MLflow — shared server</text>
+  <text class="ps" x="580" y="470" text-anchor="middle">golden record · search · compare</text>
+
+  <!-- footer: bundle + legend + PR rule -->
+  <rect x="40" y="520" width="1080" height="130" rx="12" fill="none" stroke="#B4B2A9" stroke-width="1.5" stroke-dasharray="6 5"/>
+  <text class="bs nt" x="62" y="548" font-weight="650">eval-pipeline (bundle)</text>
+  <text class="bs ns" x="210" y="548">: pip eval-lib + submodule paper-registry — runs everything end-to-end + hosts the shared MLflow + docs.</text>
+
+  <line x1="62" y1="585" x2="104" y2="585" class="arr" marker-end="url(#ah)"/>
+  <text class="bs ns" x="116" y="589">runtime — depends on / logs to</text>
+  <line x1="470" y1="585" x2="512" y2="585" class="arrd" marker-end="url(#ahp)"/>
+  <text class="bs ns" x="524" y="589">authoring — PR / use template / copy spec</text>
+
+  <text class="bs nt" x="62" y="624" font-weight="650">Only PRs back to central:</text>
+  <text class="bs ns" x="226" y="624">new metric → eval-lib · new spec → paper-registry. Experiment code never PRs back.</text>
+</svg>

@@ -29,6 +29,10 @@ forks the baseline run and the delta is computed automatically. See
 golden record for every run to a shared MLflow server. Docker pins the
 environment. CI validates every spec.
 
+## Repo layout (how the layers map to repos)
+
+![Repo pipeline & data flow](pipeline.svg)
+
 ## How a run flows
 
 ```
