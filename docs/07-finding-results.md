@@ -5,8 +5,11 @@ discover what someone already ran and see exactly how — without asking them.
 
 Point your tools at the shared server once:
 
+```bash
+export MLFLOW_TRACKING_URI=http://<server>:5000          # Linux / macOS
+```
 ```powershell
-$env:MLFLOW_TRACKING_URI = "http://<server>:5000"
+$env:MLFLOW_TRACKING_URI = "http://<server>:5000"        # Windows
 ```
 
 ## Option A — the `search.py` CLI (terminal / scriptable)

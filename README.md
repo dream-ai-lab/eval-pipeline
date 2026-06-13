@@ -23,11 +23,15 @@ same numbers on any machine.
 
 ## Quickstart (Docker — proves reproducibility)
 
+```bash
+./run.sh        # Linux / macOS
+```
 ```powershell
-.\run.ps1          # builds image, starts MLflow, runs both reproduces + the proposal
+.\run.ps1       # Windows
 ```
 
-Then open the MLflow UI at http://localhost:5000.
+Builds the image, starts MLflow, runs both reproduces + the proposal, then
+open the MLflow UI at http://localhost:5000.
 
 ## Proven results
 
@@ -52,8 +56,9 @@ Compare reproduce vs proposal directly — no spreadsheet:
 
 ## Find a teammate's result
 
-```powershell
-$env:MLFLOW_TRACKING_URI = "http://<server>:5000"
+```bash
+export MLFLOW_TRACKING_URI=http://<server>:5000          # Linux/macOS
+# $env:MLFLOW_TRACKING_URI = "http://<server>:5000"      # Windows PowerShell
 python tools/search.py --role reproduce --filter "metrics.accuracy > 0.90"
 python tools/search.py --run <run_id>   # full config: every param + the spec
 ```

@@ -20,7 +20,13 @@ replaced. Field-by-field help: [04-eval-spec-reference.md](04-eval-spec-referenc
 
 Get the **real** HF commit SHAs (never `main`):
 
+```bash
+# Linux / macOS
+curl -s https://huggingface.co/api/models/<org/model>   | python -c "import sys,json;print(json.load(sys.stdin)['sha'])"
+curl -s https://huggingface.co/api/datasets/<org/dataset> | python -c "import sys,json;print(json.load(sys.stdin)['sha'])"
+```
 ```powershell
+# Windows PowerShell
 (Invoke-RestMethod "https://huggingface.co/api/models/<org/model>").sha
 (Invoke-RestMethod "https://huggingface.co/api/datasets/<org/dataset>").sha
 ```
@@ -38,9 +44,11 @@ simply: **`model_fn(texts) -> list[int]`** aligned to the dataset's
 
 ## 4. Run
 
+```bash
+PYTHONPATH="$PWD" python experiments/my-paper-id/reproduce.py   # Linux / macOS
+```
 ```powershell
-$env:PYTHONPATH = (Get-Location)
-python experiments/my-paper-id/reproduce.py
+$env:PYTHONPATH = (Get-Location); python experiments/my-paper-id/reproduce.py   # Windows
 ```
 
 If `target_passed=True`, record the run in `paper-registry/baseline_registry.yaml`.
