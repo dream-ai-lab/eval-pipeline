@@ -8,6 +8,8 @@ This repo is both the standard *and* a worked proof of it: two papers are
 reproduced end-to-end, and the whole thing runs in Docker so anyone gets the
 same numbers on any machine.
 
+![Eval-pipeline workflow](docs/workflow.svg)
+
 ## What's here
 
 | Path | What it is |

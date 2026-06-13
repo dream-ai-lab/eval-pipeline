@@ -1,5 +1,7 @@
 # 01 — Overview
 
+![Eval-pipeline workflow](workflow.svg)
+
 ## The problem
 
 The group reproduces papers across many people. Without a shared contract:

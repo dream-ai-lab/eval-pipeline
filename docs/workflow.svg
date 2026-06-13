@@ -1,0 +1,100 @@
+<svg viewBox="0 0 1100 810" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="t d" font-family="-apple-system, system-ui, 'Segoe UI', Roboto, sans-serif">
+  <title id="t">Eval-pipeline working workflow</title>
+  <desc id="d">Three roles — survey, experiment, proposal — feed a shared eval_lib.run_paper engine that logs a golden record to MLflow; reproduce runs become baselines and proposals are measured as deltas. Docker and CI make it reproducible and enforced.</desc>
+  <style>
+    .title{ font-size:23px; font-weight:700; fill:#1a1a1a; }
+    .sub{ font-size:13px; fill:#666; }
+    .lane{ font-size:11px; font-weight:600; letter-spacing:.08em; fill:#777; }
+    .bt{ font-size:15px; font-weight:650; }
+    .bs{ font-size:12px; }
+    .nt{ fill:#2C2C2A; } .ns{ fill:#5F5E5A; }
+    .pt{ fill:#26215C; } .ps{ fill:#534AB7; }
+    .arr{ fill:none; stroke:#888780; stroke-width:2; }
+    .arrd{ fill:none; stroke:#AFA9EC; stroke-width:2; stroke-dasharray:5 4; }
+    .alab{ font-size:11px; fill:#777; }
+    .badge{ fill:#534AB7; } .badget{ fill:#fff; font-size:12px; font-weight:700; }
+  </style>
+  <defs>
+    <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#888780"/>
+    </marker>
+    <marker id="ahp" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#AFA9EC"/>
+    </marker>
+  </defs>
+
+  <text class="title" x="550" y="40" text-anchor="middle">Eval-pipeline — working workflow</text>
+  <text class="sub" x="550" y="63" text-anchor="middle">paper → reproduce → proposal → discover · everyone goes through one runner</text>
+
+  <text class="lane" x="60" y="92">ROLES</text>
+
+  <rect x="60" y="100" width="280" height="64" rx="10" fill="#F1EFE8" stroke="#D3D1C7"/>
+  <text class="bt nt" x="200" y="128" text-anchor="middle">Survey member</text>
+  <text class="bs ns" x="200" y="148" text-anchor="middle">fills eval_spec.yaml</text>
+
+  <rect x="410" y="100" width="280" height="64" rx="10" fill="#F1EFE8" stroke="#D3D1C7"/>
+  <text class="bt nt" x="550" y="128" text-anchor="middle">Experiment member</text>
+  <text class="bs ns" x="550" y="148" text-anchor="middle">writes model_fn</text>
+
+  <rect x="760" y="100" width="280" height="64" rx="10" fill="#F1EFE8" stroke="#D3D1C7"/>
+  <text class="bt nt" x="900" y="128" text-anchor="middle">Proposal member</text>
+  <text class="bs ns" x="900" y="148" text-anchor="middle">improves model_fn</text>
+
+  <path class="arr" d="M200,164 L200,202" marker-end="url(#ah)"/>
+  <path class="arr" d="M550,164 L550,202" marker-end="url(#ah)"/>
+  <path class="arr" d="M900,164 L900,202" marker-end="url(#ah)"/>
+
+  <text class="lane" x="60" y="200">ARTIFACTS (git)</text>
+
+  <circle class="badge" cx="60" cy="210" r="13"/><text class="badget" x="60" y="214" text-anchor="middle">1</text>
+  <rect x="60" y="210" width="280" height="64" rx="10" fill="#F1EFE8" stroke="#D3D1C7"/>
+  <text class="bt nt" x="200" y="238" text-anchor="middle">eval_spec.yaml</text>
+  <text class="bs ns" x="200" y="258" text-anchor="middle">pinned dataset + model</text>
+
+  <circle class="badge" cx="410" cy="210" r="13"/><text class="badget" x="410" y="214" text-anchor="middle">2</text>
+  <rect x="410" y="210" width="280" height="64" rx="10" fill="#F1EFE8" stroke="#D3D1C7"/>
+  <text class="bt nt" x="550" y="238" text-anchor="middle">reproduce.py</text>
+  <text class="bs ns" x="550" y="258" text-anchor="middle">model_fn(texts) → preds</text>
+
+  <rect x="760" y="210" width="280" height="64" rx="10" fill="#F1EFE8" stroke="#D3D1C7"/>
+  <text class="bt nt" x="900" y="238" text-anchor="middle">proposal.py</text>
+  <text class="bs ns" x="900" y="258" text-anchor="middle">forks baseline run</text>
+
+  <path class="arr" d="M200,274 L200,300 L500,300 L500,322" marker-end="url(#ah)"/>
+  <path class="arr" d="M550,274 L550,322" marker-end="url(#ah)"/>
+  <path class="arrd" d="M900,274 L900,300 L600,300 L600,322" marker-end="url(#ahp)"/>
+
+  <circle class="badge" cx="120" cy="324" r="13"/><text class="badget" x="120" y="328" text-anchor="middle">3</text>
+  <rect x="120" y="324" width="860" height="86" rx="12" fill="#EEEDFE" stroke="#7F77DD" stroke-width="1.5"/>
+  <text class="pt" x="550" y="356" text-anchor="middle" font-size="17" font-weight="700">eval_lib.run_paper()  ·  the one shared runner</text>
+  <text class="ps" x="550" y="384" text-anchor="middle" font-size="13">validate spec  →  load pinned dataset  →  metric_lib (by name)  →  log to MLflow</text>
+
+  <path class="arr" d="M550,410 L550,452" marker-end="url(#ah)"/>
+
+  <circle class="badge" cx="300" cy="454" r="13"/><text class="badget" x="300" y="458" text-anchor="middle">4</text>
+  <rect x="300" y="454" width="500" height="82" rx="12" fill="#EEEDFE" stroke="#7F77DD" stroke-width="1.5"/>
+  <text class="pt" x="550" y="484" text-anchor="middle" font-size="16" font-weight="700">MLflow run — golden record</text>
+  <text class="ps" x="550" y="506" text-anchor="middle" font-size="12.5">5 required fields + full config + metrics</text>
+  <text class="ps" x="550" y="524" text-anchor="middle" font-size="12.5">proposal also logs delta vs parent</text>
+
+  <path class="arr" d="M460,536 L460,560 L295,560 L295,584" marker-end="url(#ah)"/>
+  <path class="arr" d="M640,536 L640,560 L805,560 L805,584" marker-end="url(#ah)"/>
+
+  <circle class="badge" cx="120" cy="586" r="13"/><text class="badget" x="120" y="590" text-anchor="middle">5</text>
+  <rect x="120" y="586" width="350" height="70" rx="10" fill="#F1EFE8" stroke="#D3D1C7"/>
+  <text class="bt nt" x="295" y="614" text-anchor="middle">reproduce_target ✓ → baseline_registry</text>
+  <text class="bs ns" x="295" y="634" text-anchor="middle">the anchor every proposal beats</text>
+
+  <rect x="630" y="586" width="350" height="70" rx="10" fill="#F1EFE8" stroke="#D3D1C7"/>
+  <text class="bt nt" x="805" y="614" text-anchor="middle">search.py · MLflow compare</text>
+  <text class="bs ns" x="805" y="634" text-anchor="middle">find &amp; reuse · delta vs baseline</text>
+
+  <path class="arrd" d="M470,600 C540,600 560,300 760,250" marker-end="url(#ahp)"/>
+  <text class="alab" x="560" y="430" text-anchor="middle">baseline → proposal forks it</text>
+
+  <rect x="120" y="690" width="860" height="84" rx="12" fill="none" stroke="#B4B2A9" stroke-width="1.5" stroke-dasharray="6 5"/>
+  <text class="lane" x="140" y="712">REPRODUCIBLE &amp; ENFORCED — WRAPS EVERY RUN</text>
+  <text class="bs nt" x="250" y="748" text-anchor="middle" font-weight="650">🐳 Docker · pinned image</text>
+  <text class="bs nt" x="550" y="748" text-anchor="middle" font-weight="650">✓ CI · validates every spec</text>
+  <text class="bs nt" x="820" y="748" text-anchor="middle" font-weight="650">MLflow · shared server</text>
+</svg>
