@@ -23,6 +23,9 @@
     </marker>
   </defs>
 
+  <rect x="0" y="0" width="1100" height="810" fill="#FCFBF9"/>
+  <rect x="4" y="4" width="1092" height="802" rx="14" fill="none" stroke="#E4E2DA" stroke-width="1.5"/>
+
   <text class="title" x="550" y="40" text-anchor="middle">Eval-pipeline — working workflow</text>
   <text class="sub" x="550" y="63" text-anchor="middle">paper → reproduce → proposal → discover · everyone goes through one runner</text>
 
