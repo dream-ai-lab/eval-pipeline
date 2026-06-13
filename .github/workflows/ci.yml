@@ -1,0 +1,26 @@
+name: ci
+
+# Enforces the standard on every push/PR: the metric library behaves, and
+# EVERY eval_spec.yaml in the registry is valid (pinned dataset+model, known
+# metrics, required fields). A spec that breaks the standard fails the build.
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Install deps (CPU, no model downloads)
+        run: |
+          pip install torch==2.12.0 --index-url https://download.pytorch.org/whl/cpu
+          pip install -r requirements.txt pytest
+      - name: Run tests + validate all specs
+        env:
+          PYTHONPATH: ${{ github.workspace }}
+        run: pytest tests/ -q

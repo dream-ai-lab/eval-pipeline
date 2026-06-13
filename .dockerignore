@@ -1,0 +1,7 @@
+.git
+mlruns
+**/__pycache__
+*.pyc
+docs
+.github
+*.md

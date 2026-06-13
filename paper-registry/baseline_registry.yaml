@@ -1,0 +1,17 @@
+# The anchor for every paper: the MLflow run id of the accepted reproduce
+# run, plus its score. Proposals are measured as a delta against this run.
+# Update only when a new reproduce is accepted as the official baseline.
+#
+# run_id values below are from the Docker reproduce runs on the local MLflow
+# server; on the shared team server they will be the team's accepted runs.
+distilbert-sst2:
+  reproduce_run_id: "<filled-after-docker-run>"
+  primary_metric: "accuracy"
+  score: 0.9106
+  accepted_by: "poc"
+
+distilbert-emotion:
+  reproduce_run_id: "<filled-after-docker-run>"
+  primary_metric: "f1_macro"
+  score: 0.9065
+  accepted_by: "poc"

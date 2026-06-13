@@ -1,0 +1,8 @@
+# Pinned for reproducibility. torch (CPU) is installed separately in the
+# Dockerfile from the PyTorch CPU index.
+mlflow==3.13.0
+transformers==4.57.1
+datasets==4.4.1
+scikit-learn==1.9.0
+numpy==2.3.4
+PyYAML==6.0.3
