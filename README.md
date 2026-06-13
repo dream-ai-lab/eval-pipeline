@@ -37,6 +37,19 @@ Then open the MLflow UI at http://localhost:5000.
 | proposal `distilbert-sst2` (ensemble) | accuracy | **0.9278** | — | delta **+0.017** |
 | reproduce `distilbert-emotion` | macro-F1 | **0.9065** | — | [0.80, 0.95] ✓ |
 
+## What it looks like
+
+Every run records its full config + golden record, and proposals show the
+auto-computed delta against the baseline:
+
+| Reproduce run (full config) | Proposal run (auto delta) |
+|---|---|
+| ![reproduce run detail](screenshots/02_reproduce_run_detail.png) | ![proposal run detail](screenshots/03_proposal_run_detail.png) |
+
+Compare reproduce vs proposal directly — no spreadsheet:
+
+![compare runs](screenshots/04_compare_reproduce_vs_proposal.png)
+
 ## Find a teammate's result
 
 ```powershell

@@ -22,6 +22,10 @@ python tools/search.py --role reproduce --filter "metrics.accuracy > 0.90"
 python tools/search.py --run 63a66c05ea3c47e9bfbce269ae5422b0
 ```
 
+The experiment's Runs table lists every reproduce/proposal run:
+
+![runs table](../screenshots/01_sst2_runs_table.png)
+
 A `--run` dump shows everything needed to reuse the result:
 
 ```
@@ -50,8 +54,15 @@ tags.role = 'proposal' and metrics.accuracy > 0.92
 params.`inference.seed` = '42'
 ```
 
+Each run's detail page shows the full config (all params) and the golden
+record tags:
+
+![run detail with full config](../screenshots/02_reproduce_run_detail.png)
+
 Select two runs and hit **Compare** to diff their params and metrics side by
 side. The attached `eval_spec.yaml` is under each run's **Artifacts** tab.
+
+![compare two runs](../screenshots/04_compare_reproduce_vs_proposal.png)
 
 ## What you can filter on
 
