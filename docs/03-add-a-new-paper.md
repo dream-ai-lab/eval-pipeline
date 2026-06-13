@@ -1,22 +1,26 @@
 # 03 — Add a new paper
 
-A new paper is a copy-the-template-and-fill-`model_fn` job. ~15 minutes.
+A new paper gets its **own repo**, created from the template. You never PR
+experiment code into a central repo. ~15 minutes.
 
-## 1. Scaffold
+## 1. Create the repo from the template
 
-```powershell
-python tools/new_paper.py my-paper-id
+Click **“Use this template”** on
+[experiment-template](https://github.com/dream-ai-lab/experiment-template), or:
+
+```bash
+gh repo create dream-ai-lab/reproduce-<paper-id> \
+  --template dream-ai-lab/experiment-template --public --clone
 ```
 
-Creates:
-- `paper-registry/my-paper-id/eval_spec.yaml`
-- `experiments/my-paper-id/reproduce.py`
-- `experiments/my-paper-id/proposal.py`
+It ships a working SST-2 example and is already wired to a pinned `eval-lib`.
 
-## 2. Fill the spec (survey member)
+## 2. Register + fill the spec (survey member)
 
-Edit `paper-registry/my-paper-id/eval_spec.yaml`. Every `<...>` must be
-replaced. Field-by-field help: [04-eval-spec-reference.md](04-eval-spec-reference.md).
+Add `eval_spec.yaml` to the
+[paper-registry](https://github.com/dream-ai-lab/paper-registry) (PR) and copy
+it into your repo. Every `<...>` must be replaced — field help in
+[04-eval-spec-reference.md](04-eval-spec-reference.md).
 
 Get the **real** HF commit SHAs (never `main`):
 
@@ -31,9 +35,9 @@ curl -s https://huggingface.co/api/datasets/<org/dataset> | python -c "import sy
 (Invoke-RestMethod "https://huggingface.co/api/datasets/<org/dataset>").sha
 ```
 
-`metrics.primary` / `secondary` must already exist in `eval_lib/metrics.py`.
-Need a new metric? Add it there first (see [06-standard.md](06-standard.md)) —
-never write a one-off eval function.
+`metrics.primary` / `secondary` must already exist in `eval-lib`. Need a new
+metric? PR it to [eval-lib](https://github.com/dream-ai-lab/eval-lib) first and
+bump its version (see [06-standard.md](06-standard.md)) — never write a one-off.
 
 ## 3. Implement `model_fn` (experiment member)
 
@@ -45,18 +49,15 @@ simply: **`model_fn(texts) -> list[int]`** aligned to the dataset's
 ## 4. Run
 
 ```bash
-PYTHONPATH="$PWD" python experiments/my-paper-id/reproduce.py   # Linux / macOS
-```
-```powershell
-$env:PYTHONPATH = (Get-Location); python experiments/my-paper-id/reproduce.py   # Windows
+pip install -r requirements.txt    # pulls eval-lib (pinned) + torch + transformers
+python reproduce.py
 ```
 
-If `target_passed=True`, record the run in `paper-registry/baseline_registry.yaml`.
+If `target_passed=True`, record the run in the registry's
+`baseline_registry.yaml` (PR). Log to the shared server with
+`MLFLOW_TRACKING_URI=http://<server>:5000`.
 
-## 5. Validate before pushing
+## 5. CI
 
-```powershell
-pytest tests/ -q     # validates your new spec too
-```
-
-CI runs the same check on your PR.
+Your repo's CI installs the pinned `eval-lib` and validates `eval_spec.yaml`
+automatically on every push — no central PR for the experiment itself.

@@ -1,5 +1,12 @@
 # 02 — Quickstart
 
+Clone with the submodule (the spec catalog):
+
+```bash
+git clone --recursive https://github.com/dream-ai-lab/eval-pipeline
+# already cloned? git submodule update --init
+```
+
 ## Option A — Docker (recommended, proves reproducibility)
 
 From the repo root:
@@ -38,18 +45,10 @@ identical because the dataset, model, and environment are all pinned.
 
 ## Option B — Local Python
 
+`requirements.txt` installs the pinned `eval-lib` (no `PYTHONPATH` needed):
+
 ```bash
-# Linux / macOS
-pip install torch==2.12.0 --index-url https://download.pytorch.org/whl/cpu
 pip install -r requirements.txt
-export PYTHONPATH="$PWD"
-python experiments/distilbert-sst2/reproduce.py
-```
-```powershell
-# Windows PowerShell
-pip install torch==2.12.0 --index-url https://download.pytorch.org/whl/cpu
-pip install -r requirements.txt
-$env:PYTHONPATH = (Get-Location)
 python experiments/distilbert-sst2/reproduce.py
 ```
 
@@ -57,11 +56,12 @@ By default this logs to a local `./mlruns` folder. To use a shared server, set
 `MLFLOW_TRACKING_URI=http://<server>:5000` (`export` on Linux/macOS, `$env:` on
 Windows).
 
-## Run the tests
+## Validate the registry specs
 
 ```bash
-PYTHONPATH="$PWD" pytest tests/ -q          # Linux / macOS
+pip install "git+https://github.com/dream-ai-lab/eval-lib@v0.1.0"
+cd paper-registry && python validate.py
 ```
-```powershell
-$env:PYTHONPATH = (Get-Location); pytest tests/ -q   # Windows
-```
+
+(`eval_lib`'s own unit tests live in the
+[eval-lib](https://github.com/dream-ai-lab/eval-lib) repo.)

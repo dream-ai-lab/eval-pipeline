@@ -1,26 +1,23 @@
 name: ci
 
-# Enforces the standard on every push/PR: the metric library behaves, and
-# EVERY eval_spec.yaml in the registry is valid (pinned dataset+model, known
-# metrics, required fields). A spec that breaks the standard fails the build.
+# eval_lib's unit tests live in the eval-lib repo now. Here we validate that
+# the pinned standard accepts every spec in the paper-registry submodule.
 on:
   push:
     branches: [main]
   pull_request:
 
 jobs:
-  test:
+  validate:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          submodules: recursive
       - uses: actions/setup-python@v5
         with:
           python-version: "3.13"
-      - name: Install deps (CPU, no model downloads)
-        run: |
-          pip install torch==2.12.0 --index-url https://download.pytorch.org/whl/cpu
-          pip install -r requirements.txt pytest
-      - name: Run tests + validate all specs
-        env:
-          PYTHONPATH: ${{ github.workspace }}
-        run: pytest tests/ -q
+      - name: Install the standard (pinned)
+        run: pip install "git+https://github.com/dream-ai-lab/eval-lib@v0.1.0"
+      - name: Validate registry specs
+        run: cd paper-registry && python validate.py

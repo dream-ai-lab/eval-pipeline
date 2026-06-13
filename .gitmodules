@@ -1,0 +1,3 @@
+[submodule "paper-registry"]
+	path = paper-registry
+	url = https://github.com/dream-ai-lab/paper-registry

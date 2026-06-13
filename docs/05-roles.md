@@ -4,13 +4,13 @@
 
 Reads the paper, fills the contract. No code.
 
-1. `python tools/new_paper.py <paper-id>`
-2. Complete `paper-registry/<paper-id>/eval_spec.yaml`:
+1. Add `<paper-id>/eval_spec.yaml` to the
+   [paper-registry](https://github.com/dream-ai-lab/paper-registry):
    - pin dataset + model to real HF commit SHAs
-   - map the paper's reported metric to a name in `eval_lib/metrics.py`
+   - map the paper's reported metric to a name in `eval-lib`
    - record `paper_reported` with the exact `metric_variant`
    - set a sensible `reproduce_target` band
-3. Open a PR. CI validates the spec.
+2. Open a PR. CI validates the spec.
 
 ## Experiment member
 

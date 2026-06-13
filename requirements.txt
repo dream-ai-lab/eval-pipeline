@@ -1,8 +1,6 @@
-# Pinned for reproducibility. torch (CPU) is installed separately in the
-# Dockerfile from the PyTorch CPU index.
-mlflow==3.13.0
+# Experiments depend on the shared standard (pinned) + model libraries.
+# eval-lib pulls in mlflow / scikit-learn / pyyaml / datasets transitively.
+--extra-index-url https://download.pytorch.org/whl/cpu
+eval-lib @ git+https://github.com/dream-ai-lab/eval-lib@v0.1.0
+torch==2.12.0
 transformers==4.57.1
-datasets==4.4.1
-scikit-learn==1.9.0
-numpy==2.3.4
-PyYAML==6.0.3

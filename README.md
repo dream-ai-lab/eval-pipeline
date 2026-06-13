@@ -4,28 +4,36 @@ A **shared evaluation standard** for the research group: one contract, one
 metric library, one runner — so reproduce results are comparable, reusable,
 and have a clear baseline for proposals.
 
-This repo is both the standard *and* a worked proof of it: two papers are
-reproduced end-to-end, and the whole thing runs in Docker so anyone gets the
-same numbers on any machine.
+This repo is the **reference bundle** that runs the whole standard end-to-end
+in Docker. The standard itself is split across dedicated repos (below); here
+`eval-lib` is a pinned dependency and `paper-registry` is a git submodule.
 
 ![Eval-pipeline workflow](docs/workflow.svg)
+
+## The org, in three layers
+
+| Repo | Layer | Role |
+|---|---|---|
+| [eval-lib](https://github.com/dream-ai-lab/eval-lib) | standard | Installable package: metrics, spec validation, MLflow runner. Pin a version. |
+| [paper-registry](https://github.com/dream-ai-lab/paper-registry) | contract | Central `eval_spec.yaml` catalog + baselines. Survey members PR specs. |
+| [experiment-template](https://github.com/dream-ai-lab/experiment-template) | experiment | "Use this template" → a new `reproduce-<paper>` repo, pinned to eval-lib. |
+| reproduce-[sst2](https://github.com/dream-ai-lab/reproduce-distilbert-sst2) · [emotion](https://github.com/dream-ai-lab/reproduce-distilbert-emotion) | experiment | Team-owned repos. No PR back to central. |
+| **eval-pipeline** (this repo) | bundle | Runs everything together + shared MLflow + docs + discovery tools. |
 
 ## What's here
 
 | Path | What it is |
 |---|---|
-| `eval_lib/` | Shared package: metrics (by name), spec validation, the MLflow runner |
-| `paper-registry/` | One `eval_spec.yaml` per paper — the pinned contract |
 | `experiments/` | Per-paper `reproduce.py` / `proposal.py` (you only write `model_fn`) |
-| `templates/` + `tools/new_paper.py` | Scaffold a new paper in one command |
+| `paper-registry/` | **submodule** → the spec catalog |
 | `tools/search.py` | Find teammates' runs and dump their full config |
-| `docker/` | `mlflow` server + pinned `runner` image |
-| `tests/` + `.github/workflows/ci.yml` | Enforce the standard on every PR |
+| `docker/` | `mlflow` server + pinned `runner` image (installs `eval-lib`) |
 | `docs/` | Onboarding — start at [docs/01-overview.md](docs/01-overview.md) |
 
 ## Quickstart (Docker — proves reproducibility)
 
 ```bash
+git clone --recursive https://github.com/dream-ai-lab/eval-pipeline   # pulls the submodule
 ./run.sh        # Linux / macOS
 ```
 ```powershell
