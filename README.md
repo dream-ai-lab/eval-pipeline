@@ -1,0 +1,40 @@
+# eval-pipeline
+
+A **shared evaluation standard** for the research group: one contract, one
+metric library, one runner — so reproduce results are comparable, reusable,
+and have a clear baseline for proposals.
+
+This repo is both the standard *and* a worked proof of it: two papers are
+reproduced end-to-end, and the whole thing runs in Docker so anyone gets the
+same numbers on any machine.
+
+## What's here
+
+| Path | What it is |
+|---|---|
+| `eval_lib/` | Shared package: metrics (by name), spec validation, the MLflow runner |
+| `paper-registry/` | One `eval_spec.yaml` per paper — the pinned contract |
+| `experiments/` | Per-paper `reproduce.py` / `proposal.py` (you only write `model_fn`) |
+| `templates/` + `tools/new_paper.py` | Scaffold a new paper in one command |
+| `docker/` | `mlflow` server + pinned `runner` image |
+| `tests/` + `.github/workflows/ci.yml` | Enforce the standard on every PR |
+| `docs/` | Onboarding — start at [docs/01-overview.md](docs/01-overview.md) |
+
+## Quickstart (Docker — proves reproducibility)
+
+```powershell
+.\run.ps1          # builds image, starts MLflow, runs both reproduces + the proposal
+```
+
+Then open the MLflow UI at http://localhost:5000.
+
+## Proven results
+
+| Experiment | Metric | Result | Paper-reported | Target |
+|---|---|---|---|---|
+| reproduce `distilbert-sst2` | accuracy | **0.9106** | 0.913 | [0.90, 0.92] ✓ |
+| proposal `distilbert-sst2` (ensemble) | accuracy | **0.9278** | — | delta **+0.017** |
+| reproduce `distilbert-emotion` | macro-F1 | **0.9065** | — | [0.80, 0.95] ✓ |
+
+New here? Read [docs/02-quickstart.md](docs/02-quickstart.md) then
+[docs/03-add-a-new-paper.md](docs/03-add-a-new-paper.md).
