@@ -5,13 +5,13 @@
 # run_id values below are from the Docker reproduce runs on the local MLflow
 # server; on the shared team server they will be the team's accepted runs.
 distilbert-sst2:
-  reproduce_run_id: "d1309a87045b4a22b11353733975a1d3"
+  reproduce_run_id: "63a66c05ea3c47e9bfbce269ae5422b0"
   primary_metric: "accuracy"
   score: 0.9106
   accepted_by: "poc"
 
 distilbert-emotion:
-  reproduce_run_id: "9f37d728a12d4ddfae60580e726235e3"
+  reproduce_run_id: "36477e90d5ca40babc3e1bac4be8b592"
   primary_metric: "f1_macro"
   score: 0.9065
   accepted_by: "poc"

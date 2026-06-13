@@ -49,6 +49,30 @@ def check_target(results: dict, target) -> bool:
     return True
 
 
+def _config_params(spec) -> dict:
+    """Every config scalar, flattened, so each is individually searchable in
+    MLflow (a teammate can filter on dataset.revision, inference.seed, etc.)."""
+    ds, m, inf = spec.dataset, spec.model, spec.inference
+    return {
+        "spec_version": getattr(spec, "spec_version", "unknown"),
+        "task": getattr(spec, "task", ""),
+        "dataset.hf_id": ds.hf_id,
+        "dataset.config": getattr(ds, "config", None),
+        "dataset.split": ds.split,
+        "dataset.version": ds.version,
+        "dataset.revision": getattr(ds, "revision", None),
+        "dataset.text_field": ds.text_field,
+        "dataset.label_field": ds.label_field,
+        "model.hf_id": m.hf_id,
+        "model.revision": m.revision,
+        "inference.seed": inf.seed,
+        "inference.max_length": inf.max_length,
+        "inference.batch_size": inf.batch_size,
+        "metrics.primary": spec.metrics.primary,
+        "metrics.secondary": ",".join(getattr(spec.metrics, "secondary", []) or []),
+    }
+
+
 def run_paper(
     spec_path: str,
     model_fn: ModelFn,
@@ -85,6 +109,9 @@ def run_paper(
     with mlflow.start_run(run_name=run_name or f"{role}-{spec.paper_id}") as active:
         mlflow.log_params(golden)
         mlflow.log_param("hf_model_id", f"{spec.model.hf_id}@{spec.model.revision}")
+        mlflow.log_params(_config_params(spec))
+        # The exact spec file, attached so anyone can pull the full config.
+        mlflow.log_artifact(spec_path, artifact_path="eval_spec")
         mlflow.set_tags(
             {
                 **golden,

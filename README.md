@@ -16,6 +16,7 @@ same numbers on any machine.
 | `paper-registry/` | One `eval_spec.yaml` per paper — the pinned contract |
 | `experiments/` | Per-paper `reproduce.py` / `proposal.py` (you only write `model_fn`) |
 | `templates/` + `tools/new_paper.py` | Scaffold a new paper in one command |
+| `tools/search.py` | Find teammates' runs and dump their full config |
 | `docker/` | `mlflow` server + pinned `runner` image |
 | `tests/` + `.github/workflows/ci.yml` | Enforce the standard on every PR |
 | `docs/` | Onboarding — start at [docs/01-overview.md](docs/01-overview.md) |
@@ -35,6 +36,16 @@ Then open the MLflow UI at http://localhost:5000.
 | reproduce `distilbert-sst2` | accuracy | **0.9106** | 0.913 | [0.90, 0.92] ✓ |
 | proposal `distilbert-sst2` (ensemble) | accuracy | **0.9278** | — | delta **+0.017** |
 | reproduce `distilbert-emotion` | macro-F1 | **0.9065** | — | [0.80, 0.95] ✓ |
+
+## Find a teammate's result
+
+```powershell
+$env:MLFLOW_TRACKING_URI = "http://<server>:5000"
+python tools/search.py --role reproduce --filter "metrics.accuracy > 0.90"
+python tools/search.py --run <run_id>   # full config: every param + the spec
+```
+
+See [docs/07-finding-results.md](docs/07-finding-results.md).
 
 New here? Read [docs/02-quickstart.md](docs/02-quickstart.md) then
 [docs/03-add-a-new-paper.md](docs/03-add-a-new-paper.md).
