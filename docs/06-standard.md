@@ -19,6 +19,19 @@ mechanical ones; the rest are review norms.
 6. **Run in the pinned environment.** Use the Docker image (or the pinned
    `requirements.txt`) so scores are environment-independent.
 
+## Where specs live (when to register in paper-registry)
+
+- **Always required:** every run has a *valid* `eval_spec.yaml` — `run_paper`
+  logs its `eval_spec_hash` + the file as an artifact. Comparability comes from
+  the hash, not the file's location.
+- **Register in [paper-registry](https://github.com/dream-ai-lab/paper-registry)
+  (policy):** for any shared/official paper, or before a result becomes a
+  baseline — so there is one reviewed, discoverable contract per `paper_id`.
+- **Skip registering:** quick/personal/throwaway experiments — keep the spec in
+  your own repo; the run is still valid.
+
+Full policy: [paper-registry README](https://github.com/dream-ai-lab/paper-registry#when-must-a-spec-be-registered-here).
+
 ## What CI checks
 
 - `eval_lib/metrics.py` behaves (known inputs → known scores).
