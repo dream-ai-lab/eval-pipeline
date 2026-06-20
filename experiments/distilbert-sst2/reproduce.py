@@ -2,7 +2,7 @@
 
 This is the EXPERIMENT-member side of the contract: you only write
 ``model_fn`` (text -> predicted label). Everything else — dataset loading,
-metrics, MLflow logging, the reproduce-target check — is handled by
+metrics, W&B logging, the reproduce-target check — is handled by
 eval_lib so every paper is run the exact same way.
 """
 

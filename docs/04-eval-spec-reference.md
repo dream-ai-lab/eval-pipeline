@@ -7,7 +7,7 @@ it as **immutable** — bump `spec_version` instead of editing in place.
 | Field | Required | Notes |
 |---|---|---|
 | `spec_version` | yes | Bump on any change after a run exists |
-| `paper_id` | yes | kebab-case, unique; also the MLflow experiment name |
+| `paper_id` | yes | kebab-case, unique; used as the W&B run group name |
 | `task` | yes | Free-text task name |
 | `metric_lib_version` | yes | Pins the metric code; bump when metrics change |
 | `dataset.hf_id` | yes | HF dataset repo |
@@ -25,7 +25,7 @@ it as **immutable** — bump `spec_version` instead of editing in place.
 | `metrics.primary` | yes | Must exist in `eval_lib/metrics.py` |
 | `metrics.secondary` | no | List; all must exist in metric_lib |
 | `baseline_scores.paper_reported` | yes | `value` + exact `metric_variant` + `source` |
-| `baseline_scores.our_reproduce` | yes | `value: null` — recorded in MLflow, not hand-edited |
+| `baseline_scores.our_reproduce` | yes | `value: null` — recorded in W&B, not hand-edited |
 | `reproduce_target.<metric>` | yes | `{min, max}` acceptance band for the primary metric |
 
 ## Why two separate baseline scores?

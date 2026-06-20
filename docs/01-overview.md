@@ -26,7 +26,7 @@ forks the baseline run and the delta is computed automatically. See
 [05-roles.md](05-roles.md).
 
 **Layer 3 — Unified tooling.** One runner (`eval_lib.run_paper`) logs the same
-golden record for every run to a shared MLflow server. Docker pins the
+golden record for every run to W&B. Docker pins the
 environment. CI validates every spec.
 
 ## Repo layout (how the layers map to repos)
@@ -40,7 +40,7 @@ eval_spec.yaml ─▶ load + validate + hash ─▶ load pinned dataset
                                               │
             your model_fn(texts) ─▶ preds ────┤
                                               ▼
-                 metric_lib.evaluate(by name) ─▶ MLflow run
+                 metric_lib.evaluate(by name) ─▶ W&B run
                    (paper_id, git_commit, hf_dataset_id,
                     eval_spec_hash, metric_lib_version,
                     metrics, reproduce_passed)

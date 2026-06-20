@@ -18,6 +18,6 @@ jobs:
         with:
           python-version: "3.13"
       - name: Install the standard (pinned)
-        run: pip install "git+https://github.com/dream-ai-lab/eval-lib@v0.1.0"
+        run: pip install "git+https://github.com/dream-ai-lab/eval-lib@v0.4.0"
       - name: Validate registry specs
         run: cd paper-registry && python validate.py

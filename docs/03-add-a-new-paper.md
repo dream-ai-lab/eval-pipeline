@@ -54,8 +54,9 @@ python reproduce.py
 ```
 
 If `target_passed=True`, record the run in the registry's
-`baseline_registry.yaml` (PR). Log to the shared server with
-`MLFLOW_TRACKING_URI=http://<server>:5000`.
+`baseline_registry.yaml` (PR). Runs are logged to W&B automatically; set
+`WANDB_ENTITY` and `WANDB_PROJECT` (defaults to `eval-lib`) to point to the
+shared workspace, or `WANDB_MODE=offline` to log locally and sync later.
 
 ## 5. CI
 

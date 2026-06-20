@@ -1,105 +1,124 @@
 """Search experiment results logged by the team and inspect their full config.
 
-Connects to the MLflow server in MLFLOW_TRACKING_URI (defaults to the local
-./mlruns store). Examples:
+Reads from Weights & Biases via the public API. Target the team's entity/project
+with the environment:
 
-    # all runs for a paper (newest first)
+    export WANDB_ENTITY=dream-ai-lab     # the team
+    export WANDB_PROJECT=eval-lib        # optional; defaults to "eval-lib"
+    wandb login                          # or set WANDB_API_KEY
+
+Examples:
+
+    # all runs for a paper (newest first) — runs are grouped by paper_id
     python tools/search.py --paper distilbert-sst2
 
-    # only accepted reproduces that beat 0.92 accuracy
+    # only reproduces that beat 0.90 accuracy
     python tools/search.py --paper distilbert-sst2 --role reproduce \
-        --filter "metrics.accuracy > 0.90"
+        --filter "accuracy > 0.90"
 
-    # every config param + metric + tag for one run
-    python tools/search.py --run d1309a87045b4a22b11353733975a1d3
-
-Point at the shared server with:
-    setx MLFLOW_TRACKING_URI http://<server>:5000   (or export on Linux)
+    # every config field + metric + file for one run
+    python tools/search.py --run d1309a87
 """
 
 import argparse
+import os
 
-import mlflow
+import wandb
+
+_OPS = {">": "$gt", ">=": "$gte", "<": "$lt", "<=": "$lte", "==": "$eq", "=": "$eq"}
 
 
-def _dump_run(client, run_id: str) -> None:
-    r = client.get_run(run_id)
-    print(f"run_id: {run_id}")
-    print(f"experiment: {client.get_experiment(r.info.experiment_id).name}")
-    print(f"status: {r.info.status}\n")
+def _project_path() -> str:
+    """``entity/project`` (or just ``project`` if no entity is set)."""
+    project = os.environ.get("WANDB_PROJECT", "eval-lib")
+    entity = os.environ.get("WANDB_ENTITY")
+    return f"{entity}/{project}" if entity else project
 
-    print("-- tags (golden record) --")
-    for k in sorted(r.data.tags):
-        if not k.startswith("mlflow."):
-            print(f"  {k:22} = {r.data.tags[k]}")
 
-    print("\n-- params (full config) --")
-    for k in sorted(r.data.params):
-        print(f"  {k:22} = {r.data.params[k]}")
+def _parse_filter(expr: str):
+    """Parse ``metric OP value`` (e.g. ``accuracy > 0.90``) into a W&B filter."""
+    for sym in (">=", "<=", "==", ">", "<", "="):
+        if sym in expr:
+            key, val = expr.split(sym, 1)
+            return f"summary_metrics.{key.strip()}", {_OPS[sym]: float(val)}
+    raise SystemExit(f"bad --filter {expr!r}; use e.g. \"accuracy > 0.90\"")
 
+
+def _metrics(summary) -> dict:
+    """Numeric, non-internal entries from a run summary (W&B prefixes its own
+    bookkeeping keys with '_')."""
+    out = {}
+    for k in summary.keys():
+        if k.startswith("_"):
+            continue
+        v = summary[k]
+        if isinstance(v, (int, float)):
+            out[k] = v
+    return out
+
+
+def _dump_run(api, run_id: str) -> None:
+    r = api.run(f"{_project_path()}/{run_id}")
+    print(f"run_id: {r.id}")
+    print(f"name: {r.name}   paper(group): {r.group}   job_type: {r.job_type}   state: {r.state}\n")
+
+    print("-- config (golden record + full config) --")
+    for k in sorted(r.config):
+        print(f"  {k:24} = {r.config[k]}")
+
+    metrics = _metrics(r.summary)
     print("\n-- metrics --")
-    for k in sorted(r.data.metrics):
-        print(f"  {k:22} = {r.data.metrics[k]:.4f}")
+    for k in sorted(metrics):
+        print(f"  {k:24} = {metrics[k]:.4f}" if isinstance(metrics[k], float) else f"  {k:24} = {metrics[k]}")
 
+    print("\n-- files -- (incl. the exact eval_spec)")
     try:
-        arts = [a.path for a in client.list_artifacts(run_id, "eval_spec")]
-        if arts:
-            print(f"\n-- artifacts -- (exact spec)\n  {', '.join(arts)}")
-    except Exception as e:  # artifact store may be unreachable from a client
-        print(f"\n-- artifacts -- (unavailable: {e})")
+        names = [f.name for f in r.files() if "eval_spec" in f.name or f.name.endswith(".yaml")]
+        print("  " + (", ".join(names) if names else "(none)"))
+    except Exception as e:  # the run's files may be unreachable
+        print(f"  (unavailable: {e})")
 
 
 def _search(args) -> None:
-    client = mlflow.MlflowClient()
+    api = wandb.Api()
 
+    filters = {}
     if args.paper:
-        exp = mlflow.get_experiment_by_name(args.paper)
-        if exp is None:
-            raise SystemExit(f"no experiment named '{args.paper}'")
-        exp_ids = [exp.experiment_id]
-    else:
-        exp_ids = [e.experiment_id for e in client.search_experiments()]
-
-    clauses = []
+        filters["group"] = args.paper
     if args.role:
-        clauses.append(f"tags.role = '{args.role}'")
+        filters["config.role"] = args.role
     if args.filter:
-        clauses.append(args.filter)
-    filter_string = " and ".join(clauses)
+        key, cond = _parse_filter(args.filter)
+        filters[key] = cond
 
-    df = mlflow.search_runs(exp_ids, filter_string=filter_string, order_by=["start_time DESC"])
-    if len(df) == 0:
+    runs = api.runs(_project_path(), filters=filters or None, order="-created_at")
+    runs = list(runs)
+    if not runs:
         print("no matching runs")
         return
 
-    cols = ["run_id", "tags.paper_id", "tags.role", "tags.reproduce_passed",
-            "params.model.hf_id", "params.dataset.revision", "params.inference.seed"]
-    metric_cols = [c for c in df.columns if c.startswith("metrics.") and not c.startswith("metrics.delta")]
-    cols += metric_cols
-    have = [c for c in cols if c in df.columns]
-
-    print(f"{len(df)} run(s):\n")
-    for _, row in df[have].iterrows():
-        rid = row["run_id"]
-        paper = row.get("tags.paper_id", "?")
-        role = row.get("tags.role", "?")
+    print(f"{len(runs)} run(s):\n")
+    for r in runs:
+        paper = r.group or r.config.get("paper_id", "?")
+        role = r.config.get("role", r.job_type or "?")
+        tier = r.config.get("eval_tier", "?")
         metrics = " ".join(
-            f"{c.split('.', 1)[1]}={row[c]:.4f}" for c in metric_cols if c in row and row[c] == row[c]
+            f"{k}={v:.4f}" for k, v in sorted(_metrics(r.summary).items()) if not k.startswith("delta_")
         )
-        print(f"  {rid}  [{paper}/{role}]  {metrics}")
-    print(f"\nInspect full config:  python tools/search.py --run <run_id>")
+        print(f"  {r.id}  [{paper}/{role}/{tier}]  {metrics}")
+    print("\nInspect full config:  python tools/search.py --run <run_id>")
 
 
 def main():
-    ap = argparse.ArgumentParser(description="Search team eval results in MLflow")
-    ap.add_argument("--paper", help="paper_id (MLflow experiment)")
+    ap = argparse.ArgumentParser(description="Search team eval results in Weights & Biases")
+    ap.add_argument("--paper", help="paper_id (W&B run group)")
     ap.add_argument("--role", choices=["reproduce", "proposal"], help="filter by role")
-    ap.add_argument("--filter", help="extra MLflow filter, e.g. \"metrics.accuracy > 0.92\"")
-    ap.add_argument("--run", help="dump all params/metrics/tags for one run id")
+    ap.add_argument("--filter", help='metric threshold, e.g. "accuracy > 0.90"')
+    ap.add_argument("--run", help="dump all config/metrics/files for one run id")
     args = ap.parse_args()
 
     if args.run:
-        _dump_run(mlflow.MlflowClient(), args.run)
+        _dump_run(wandb.Api(), args.run)
     else:
         _search(args)
 

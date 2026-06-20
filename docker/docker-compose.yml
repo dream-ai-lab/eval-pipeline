@@ -1,13 +1,12 @@
-# Two services that prove the standard end to end:
-#   mlflow  — the shared tracking server (local stand-in for the team server)
-#   runner  — the pinned experiment image; one command per experiment
+# The pinned experiment image — one command per experiment. Runs log to
+# Weights & Biases (hosted): set WANDB_API_KEY + WANDB_ENTITY to push to the
+# team, or WANDB_MODE=offline to run without a network (sync later with
+# `wandb sync`). No tracking server to run — W&B is hosted.
 #
 # Usage (from repo root):
-#   docker compose -f docker/docker-compose.yml up -d --build mlflow
 #   docker compose -f docker/docker-compose.yml run --rm reproduce-sst2
-#   docker compose -f docker/docker-compose.yml run --rm proposal-sst2
+#   docker compose -f docker/docker-compose.yml run --rm proposal-sst2     # needs online W&B
 #   docker compose -f docker/docker-compose.yml run --rm reproduce-emotion
-# MLflow UI at http://localhost:5000
 
 x-runner: &runner
   image: eval-pipeline:latest
@@ -16,41 +15,18 @@ x-runner: &runner
     dockerfile: docker/Dockerfile
     args:
       GIT_COMMIT: ${GIT_COMMIT:-unknown}
-  depends_on:
-    mlflow:
-      condition: service_healthy
   environment:
-    MLFLOW_TRACKING_URI: http://mlflow:5000
+    WANDB_API_KEY: ${WANDB_API_KEY:-}
+    WANDB_ENTITY: ${WANDB_ENTITY:-}
+    WANDB_PROJECT: ${WANDB_PROJECT:-eval-lib}
+    WANDB_MODE: ${WANDB_MODE:-online}
+    WANDB_DIR: /wandb
     HF_HOME: /hf-cache
   volumes:
     - hf_cache:/hf-cache
+    - wandb_data:/wandb        # offline runs persist here for `wandb sync`
 
 services:
-  mlflow:
-    image: eval-pipeline:latest
-    build:
-      context: ..
-      dockerfile: docker/Dockerfile
-      args:
-        GIT_COMMIT: ${GIT_COMMIT:-unknown}
-    command: >
-      mlflow server --host 0.0.0.0 --port 5000
-      --backend-store-uri sqlite:////mlflow/mlflow.db
-      --artifacts-destination /mlflow/artifacts
-    environment:
-      # Allow the in-compose hostname; MLflow 3.x blocks unknown Host headers
-      # (DNS-rebinding protection) which otherwise rejects http://mlflow:5000.
-      MLFLOW_SERVER_ALLOWED_HOSTS: "mlflow:5000,localhost:5000,127.0.0.1:5000"
-    ports:
-      - "5000:5000"
-    volumes:
-      - mlflow_data:/mlflow
-    healthcheck:
-      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:5000/health')"]
-      interval: 5s
-      timeout: 5s
-      retries: 20
-
   reproduce-sst2:
     <<: *runner
     command: python experiments/distilbert-sst2/reproduce.py
@@ -64,5 +40,5 @@ services:
     command: python experiments/distilbert-emotion/reproduce.py
 
 volumes:
-  mlflow_data:
   hf_cache:
+  wandb_data:
