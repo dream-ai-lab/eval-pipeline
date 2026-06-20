@@ -2,7 +2,7 @@
 
 Demonstrates the proposal workflow: it does NOT create a new paper or
 spec — it reuses the same eval_spec, forks the baseline reproduce run in
-MLflow (role=proposal, parent_run_id), and the runner logs the delta
+W&B (role=proposal, parent_run_id), and the runner logs the delta
 automatically. The "improvement" here is a probability-average ensemble of
 the distilled model with a stronger RoBERTa SST-2 checkpoint.
 """
@@ -10,9 +10,9 @@ the distilled model with a stronger RoBERTa SST-2 checkpoint.
 import os
 import random
 
-import mlflow
 import numpy as np
 import torch
+import wandb
 from transformers import AutoModelForSequenceClassification, AutoTokenizer
 
 from eval_lib import load_spec, run_paper
@@ -65,16 +65,22 @@ def build_model_fn(spec):
 
 
 def latest_reproduce_run(paper_id):
-    exp = mlflow.get_experiment_by_name(paper_id)
-    if exp is None:
+    """Latest reproduce run id for the paper, from W&B (runs are grouped by
+    paper_id). Needs online access — offline runs aren't queryable until synced."""
+    project = os.environ.get("WANDB_PROJECT", "eval-lib")
+    entity = os.environ.get("WANDB_ENTITY")
+    path = f"{entity}/{project}" if entity else project
+    try:
+        runs = wandb.Api().runs(
+            path,
+            filters={"group": paper_id, "config.role": "reproduce"},
+            order="-created_at",
+        )
+        for r in runs:
+            return r.id
+    except Exception:
         return None
-    df = mlflow.search_runs(
-        [exp.experiment_id],
-        filter_string="tags.role = 'reproduce'",
-        order_by=["start_time DESC"],
-        max_results=1,
-    )
-    return None if len(df) == 0 else df.iloc[0]["run_id"]
+    return None
 
 
 def main():
@@ -82,7 +88,10 @@ def main():
     set_seed(spec.inference.seed)
     parent = latest_reproduce_run(spec.paper_id)
     if parent is None:
-        raise SystemExit("No baseline reproduce run found — run reproduce.py first.")
+        raise SystemExit(
+            "No baseline reproduce run found in W&B — run reproduce.py first, "
+            "and make sure W&B is online (WANDB_ENTITY + login), not offline."
+        )
     result = run_paper(SPEC, build_model_fn(spec), role="proposal", parent_run_id=parent)
     print(
         f"[proposal] {spec.paper_id}: {result['results']} "

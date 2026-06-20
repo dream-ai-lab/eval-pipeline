@@ -1,6 +1,6 @@
 # Experiments depend on the shared standard (pinned) + model libraries.
-# eval-lib pulls in mlflow / scikit-learn / pyyaml / datasets transitively.
+# eval-lib pulls in wandb / scikit-learn / pyyaml / datasets transitively.
 --extra-index-url https://download.pytorch.org/whl/cpu
-eval-lib @ git+https://github.com/dream-ai-lab/eval-lib@v0.1.0
+eval-lib @ git+https://github.com/dream-ai-lab/eval-lib@v0.4.0
 torch==2.12.0
 transformers==4.57.1

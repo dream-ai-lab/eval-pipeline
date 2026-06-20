@@ -1,7 +1,7 @@
 # Reproducible image for the eval standard. Pinned base + pinned deps mean
 # any machine builds the same environment — the core reproducibility claim.
 # eval_lib is no longer vendored here; it is installed as a pinned dependency
-# (eval-lib @ v0.1.0) from requirements.txt.
+# (eval-lib @ v0.4.0) from requirements.txt.
 FROM python:3.13-slim
 
 WORKDIR /app

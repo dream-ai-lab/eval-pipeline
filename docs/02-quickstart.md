@@ -18,15 +18,14 @@ From the repo root:
 .\run.ps1         # Windows
 ```
 
-This builds the pinned image, starts the MLflow server, then runs the two
-reproduces and the proposal. Open http://localhost:5000 to compare runs.
+This builds the pinned image, then runs the two reproduces and the proposal.
+Open `https://wandb.ai/<entity>/<project>` to compare runs.
 
 Run the steps manually if you prefer:
 
 ```bash
 # Linux / macOS
 export GIT_COMMIT="$(git rev-parse --short HEAD)"
-docker compose -f docker/docker-compose.yml up -d --build mlflow
 docker compose -f docker/docker-compose.yml run --rm reproduce-sst2
 docker compose -f docker/docker-compose.yml run --rm proposal-sst2
 docker compose -f docker/docker-compose.yml run --rm reproduce-emotion
@@ -34,7 +33,6 @@ docker compose -f docker/docker-compose.yml run --rm reproduce-emotion
 ```powershell
 # Windows PowerShell
 $env:GIT_COMMIT = (git rev-parse --short HEAD)
-docker compose -f docker/docker-compose.yml up -d --build mlflow
 docker compose -f docker/docker-compose.yml run --rm reproduce-sst2
 docker compose -f docker/docker-compose.yml run --rm proposal-sst2
 docker compose -f docker/docker-compose.yml run --rm reproduce-emotion
@@ -52,9 +50,10 @@ pip install -r requirements.txt
 python experiments/distilbert-sst2/reproduce.py
 ```
 
-By default this logs to a local `./mlruns` folder. To use a shared server, set
-`MLFLOW_TRACKING_URI=http://<server>:5000` (`export` on Linux/macOS, `$env:` on
-Windows).
+By default this logs to W&B using `WANDB_ENTITY` (team) and `WANDB_PROJECT`
+(defaults to `eval-lib`). Authenticate once with `wandb login` or set
+`WANDB_API_KEY`. To run offline without a network connection, set
+`WANDB_MODE=offline` and run `wandb sync` afterwards.
 
 ## Validate the registry specs
 

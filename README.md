@@ -14,11 +14,11 @@ in Docker. The standard itself is split across dedicated repos (below); here
 
 | Repo | Layer | Role |
 |---|---|---|
-| [eval-lib](https://github.com/dream-ai-lab/eval-lib) | standard | Installable package: metrics, spec validation, MLflow runner. Pin a version. |
+| [eval-lib](https://github.com/dream-ai-lab/eval-lib) | standard | Installable package: metrics, spec validation, W&B runner. Pin a version. |
 | [paper-registry](https://github.com/dream-ai-lab/paper-registry) | contract | Central `eval_spec.yaml` catalog + baselines. Survey members PR specs. |
 | [experiment-template](https://github.com/dream-ai-lab/experiment-template) | experiment | "Use this template" → a new `reproduce-<paper>` repo, pinned to eval-lib. |
 | reproduce-[sst2](https://github.com/dream-ai-lab/reproduce-distilbert-sst2) · [emotion](https://github.com/dream-ai-lab/reproduce-distilbert-emotion) | experiment | Team-owned repos. No PR back to central. |
-| **eval-pipeline** (this repo) | bundle | Runs everything together + shared MLflow + docs + discovery tools. |
+| **eval-pipeline** (this repo) | bundle | Runs everything together + logs to W&B + docs + discovery tools. |
 
 ![Repo pipeline & data flow](docs/pipeline.svg)
 
@@ -29,21 +29,22 @@ in Docker. The standard itself is split across dedicated repos (below); here
 | `experiments/` | Per-paper `reproduce.py` / `proposal.py` (you only write `model_fn`) |
 | `paper-registry/` | **submodule** → the spec catalog |
 | `tools/search.py` | Find teammates' runs and dump their full config |
-| `docker/` | `mlflow` server + pinned `runner` image (installs `eval-lib`) |
+| `docker/` | pinned `runner` image (installs `eval-lib`, logs to W&B) |
 | `docs/` | Onboarding — start at [docs/01-overview.md](docs/01-overview.md) |
 
 ## Quickstart (Docker — proves reproducibility)
 
 ```bash
 git clone --recursive https://github.com/dream-ai-lab/eval-pipeline   # pulls the submodule
+export WANDB_ENTITY=dream-ai-lab && wandb login   # or WANDB_MODE=offline to run without a network
 ./run.sh        # Linux / macOS
 ```
 ```powershell
 .\run.ps1       # Windows
 ```
 
-Builds the image, starts MLflow, runs both reproduces + the proposal, then
-open the MLflow UI at http://localhost:5000.
+Builds the image and runs both reproduces + the proposal. Runs log to **W&B** —
+view them at `https://wandb.ai/<entity>/eval-lib`, grouped by `paper_id`.
 
 ## Proven results
 
@@ -69,9 +70,9 @@ Compare reproduce vs proposal directly — no spreadsheet:
 ## Find a teammate's result
 
 ```bash
-export MLFLOW_TRACKING_URI=http://<server>:5000          # Linux/macOS
-# $env:MLFLOW_TRACKING_URI = "http://<server>:5000"      # Windows PowerShell
-python tools/search.py --role reproduce --filter "metrics.accuracy > 0.90"
+export WANDB_ENTITY=dream-ai-lab      # the team; WANDB_PROJECT defaults to "eval-lib"
+wandb login                           # or set WANDB_API_KEY
+python tools/search.py --role reproduce --filter "accuracy > 0.90"
 python tools/search.py --run <run_id>   # full config: every param + the spec
 ```
 

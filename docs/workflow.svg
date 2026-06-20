@@ -1,6 +1,6 @@
 <svg viewBox="0 0 1100 810" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="t d" font-family="-apple-system, system-ui, 'Segoe UI', Roboto, sans-serif">
   <title id="t">Eval-pipeline working workflow</title>
-  <desc id="d">Three roles — survey, experiment, proposal — feed a shared eval_lib.run_paper engine that logs a golden record to MLflow; reproduce runs become baselines and proposals are measured as deltas. Docker and CI make it reproducible and enforced.</desc>
+  <desc id="d">Three roles — survey, experiment, proposal — feed a shared eval_lib.run_paper engine that logs a golden record to W&amp;B; reproduce runs become baselines and proposals are measured as deltas. Docker and CI make it reproducible and enforced.</desc>
   <style>
     .title{ font-size:23px; font-weight:700; fill:#1a1a1a; }
     .sub{ font-size:13px; fill:#666; }
@@ -70,13 +70,13 @@
   <circle class="badge" cx="120" cy="324" r="13"/><text class="badget" x="120" y="328" text-anchor="middle">3</text>
   <rect x="120" y="324" width="860" height="86" rx="12" fill="#EEEDFE" stroke="#7F77DD" stroke-width="1.5"/>
   <text class="pt" x="550" y="356" text-anchor="middle" font-size="17" font-weight="700">eval_lib.run_paper()  ·  the one shared runner</text>
-  <text class="ps" x="550" y="384" text-anchor="middle" font-size="13">validate spec  →  load pinned dataset  →  metric_lib (by name)  →  log to MLflow</text>
+  <text class="ps" x="550" y="384" text-anchor="middle" font-size="13">validate spec  →  load pinned dataset  →  metric_lib (by name)  →  log to W&amp;B</text>
 
   <path class="arr" d="M550,410 L550,452" marker-end="url(#ah)"/>
 
   <circle class="badge" cx="300" cy="454" r="13"/><text class="badget" x="300" y="458" text-anchor="middle">4</text>
   <rect x="300" y="454" width="500" height="82" rx="12" fill="#EEEDFE" stroke="#7F77DD" stroke-width="1.5"/>
-  <text class="pt" x="550" y="484" text-anchor="middle" font-size="16" font-weight="700">MLflow run — golden record</text>
+  <text class="pt" x="550" y="484" text-anchor="middle" font-size="16" font-weight="700">W&amp;B run — golden record</text>
   <text class="ps" x="550" y="506" text-anchor="middle" font-size="12.5">5 required fields + full config + metrics</text>
   <text class="ps" x="550" y="524" text-anchor="middle" font-size="12.5">proposal also logs delta vs parent</text>
 
@@ -89,7 +89,7 @@
   <text class="bs ns" x="295" y="634" text-anchor="middle">the anchor every proposal beats</text>
 
   <rect x="630" y="586" width="350" height="70" rx="10" fill="#F1EFE8" stroke="#D3D1C7"/>
-  <text class="bt nt" x="805" y="614" text-anchor="middle">search.py · MLflow compare</text>
+  <text class="bt nt" x="805" y="614" text-anchor="middle">search.py · W&amp;B compare</text>
   <text class="bs ns" x="805" y="634" text-anchor="middle">find &amp; reuse · delta vs baseline</text>
 
   <path class="arrd" d="M470,600 C540,600 560,300 760,250" marker-end="url(#ahp)"/>
@@ -99,5 +99,5 @@
   <text class="lane" x="140" y="712">REPRODUCIBLE &amp; ENFORCED — WRAPS EVERY RUN</text>
   <text class="bs nt" x="250" y="748" text-anchor="middle" font-weight="650">🐳 Docker · pinned image</text>
   <text class="bs nt" x="550" y="748" text-anchor="middle" font-weight="650">✓ CI · validates every spec</text>
-  <text class="bs nt" x="820" y="748" text-anchor="middle" font-weight="650">MLflow · shared server</text>
+  <text class="bs nt" x="820" y="748" text-anchor="middle" font-weight="650">W&amp;B · hosted</text>
 </svg>

@@ -1,6 +1,6 @@
 <svg viewBox="0 0 1160 700" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="t d" font-family="-apple-system, system-ui, 'Segoe UI', Roboto, sans-serif">
   <title id="t">Eval standard — repo pipeline and data flow</title>
-  <desc id="d">eval-lib is the pinned standard installed by every repo. paper-registry holds the spec catalog. New experiments are created from experiment-template; each team-owned reproduce repo pins eval-lib and logs a golden record to the shared MLflow server. Only new metrics (to eval-lib) and new specs (to paper-registry) are PR'd back. eval-pipeline bundles it all.</desc>
+  <desc id="d">eval-lib is the pinned standard installed by every repo. paper-registry holds the spec catalog. New experiments are created from experiment-template; each team-owned reproduce repo pins eval-lib and logs a golden record to W&B. Only new metrics (to eval-lib) and new specs (to paper-registry) are PR'd back. eval-pipeline bundles it all.</desc>
   <style>
     .title{ font-size:23px; font-weight:700; fill:#1a1a1a; }
     .sub{ font-size:13px; fill:#666; }
@@ -26,7 +26,7 @@
   <rect x="4" y="4" width="1152" height="692" rx="14" fill="none" stroke="#E4E2DA" stroke-width="1.5"/>
 
   <text class="title" x="580" y="36" text-anchor="middle">Eval standard — repo pipeline &amp; data flow</text>
-  <text class="sub" x="580" y="58" text-anchor="middle">eval-lib flows out as a pinned dependency · results flow into MLflow · only specs &amp; metrics PR back</text>
+  <text class="sub" x="580" y="58" text-anchor="middle">eval-lib flows out as a pinned dependency · results flow into W&amp;B · only specs &amp; metrics PR back</text>
 
   <!-- PR inbound (authoring) -->
   <text class="alabp" x="135" y="96" text-anchor="middle">PR: new metric</text>
@@ -80,21 +80,21 @@
   <path class="arrd" d="M860,196 L965,278" marker-end="url(#ahp)"/>
   <text class="alabp" x="935" y="246" text-anchor="end">use template</text>
 
-  <!-- team -> MLflow (runtime: log) -->
+  <!-- team -> W&B (runtime: log) -->
   <path class="arr" d="M425,360 L545,418" marker-end="url(#ah)"/>
   <path class="arr" d="M700,360 L600,418" marker-end="url(#ah)"/>
   <path class="arr" d="M975,360 L640,418" marker-end="url(#ah)"/>
   <text class="alab" x="610" y="392" text-anchor="middle">log golden record</text>
 
-  <!-- MLflow -->
+  <!-- W&B -->
   <rect x="430" y="420" width="300" height="66" rx="11" fill="#EEEDFE" stroke="#7F77DD" stroke-width="1.5"/>
-  <text class="pt" x="580" y="448" text-anchor="middle" font-size="15" font-weight="700">MLflow — shared server</text>
+  <text class="pt" x="580" y="448" text-anchor="middle" font-size="15" font-weight="700">W&amp;B — hosted</text>
   <text class="ps" x="580" y="470" text-anchor="middle">golden record · search · compare</text>
 
   <!-- footer: bundle + legend + PR rule -->
   <rect x="40" y="520" width="1080" height="130" rx="12" fill="none" stroke="#B4B2A9" stroke-width="1.5" stroke-dasharray="6 5"/>
   <text class="bs nt" x="62" y="548" font-weight="650">eval-pipeline (bundle)</text>
-  <text class="bs ns" x="210" y="548">: pip eval-lib + submodule paper-registry — runs everything end-to-end + hosts the shared MLflow + docs.</text>
+  <text class="bs ns" x="210" y="548">: pip eval-lib + submodule paper-registry — runs everything end-to-end + logs to shared W&amp;B + docs.</text>
 
   <line x1="62" y1="585" x2="104" y2="585" class="arr" marker-end="url(#ah)"/>
   <text class="bs ns" x="116" y="589">runtime — depends on / logs to</text>

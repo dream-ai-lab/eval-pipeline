@@ -1,15 +1,17 @@
 # 07 — Finding a teammate's results
 
-Every run logs its **full config** to the shared MLflow server, so you can
-discover what someone already ran and see exactly how — without asking them.
+Every run logs its **full config** to W&B, so you can discover what someone
+already ran and see exactly how — without asking them.
 
-Point your tools at the shared server once:
+Point your tools at the shared W&B workspace once:
 
 ```bash
-export MLFLOW_TRACKING_URI=http://<server>:5000          # Linux / macOS
+export WANDB_ENTITY=<team>                # Linux / macOS
+export WANDB_PROJECT=eval-lib
 ```
 ```powershell
-$env:MLFLOW_TRACKING_URI = "http://<server>:5000"        # Windows
+$env:WANDB_ENTITY = "<team>"             # Windows
+$env:WANDB_PROJECT = "eval-lib"
 ```
 
 ## Option A — the `search.py` CLI (terminal / scriptable)
@@ -25,7 +27,7 @@ python tools/search.py --role reproduce --filter "metrics.accuracy > 0.90"
 python tools/search.py --run 63a66c05ea3c47e9bfbce269ae5422b0
 ```
 
-The experiment's Runs table lists every reproduce/proposal run:
+The run group's Runs table lists every reproduce/proposal run:
 
 ![runs table](../screenshots/01_sst2_runs_table.png)
 
@@ -47,23 +49,23 @@ A `--run` dump shows everything needed to reuse the result:
   eval_spec/eval_spec.yaml
 ```
 
-## Option B — the MLflow UI (point-and-click)
+## Option B — the W&B UI (point-and-click)
 
-Open `http://<server>:5000`, pick the experiment (= `paper_id`), and use the
-search bar with the same filter grammar, e.g.:
+Open `https://wandb.ai/<entity>/<project>`, pick the run group (= `paper_id`),
+and use the filter bar, e.g.:
 
 ```
 tags.role = 'proposal' and metrics.accuracy > 0.92
-params.`inference.seed` = '42'
+config.inference.seed = 42
 ```
 
-Each run's detail page shows the full config (all params) and the golden
+Each run's detail page shows the full config (all params/config) and the golden
 record tags:
 
 ![run detail with full config](../screenshots/02_reproduce_run_detail.png)
 
-Select two runs and hit **Compare** to diff their params and metrics side by
-side. The attached `eval_spec.yaml` is under each run's **Artifacts** tab.
+Select two runs and hit **Compare** to diff their config and metrics side by
+side. The attached `eval_spec.yaml` is under each run's **Files** tab.
 
 ![compare two runs](../screenshots/04_compare_reproduce_vs_proposal.png)
 
